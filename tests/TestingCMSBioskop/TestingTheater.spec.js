@@ -68,3 +68,24 @@ test("Lakukan Edit Theater", async ({ page }) => {
     await expect(verifyNewTheater).toHaveText(`${editTheater}`);
   });
 });
+
+test("Lakukan edit theater dengan mengosongkan nama theater", async ({
+  page,
+}) => {
+  await test.step("Klik button Edit data theater", async () => {
+    await page
+      .locator("tr", { hasText: "Bioskop Keliling" })
+      .locator("a:has-text('Edit')")
+      .click();
+  });
+  await test.step("Edit data theater", async () => {
+    await page.getByPlaceholder("Enter name...").fill(" ");
+    await page.locator("//button[normalize-space()='Submit']").click();
+  });
+
+  await test.step("Verify data theater yang berhasil di edit ", async () => {
+    await expect(
+      page.locator("text=String must contain at least 3 character(s)")
+    ).toBeVisible();
+  });
+});

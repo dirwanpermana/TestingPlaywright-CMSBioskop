@@ -1,0 +1,176 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: Lakukan edit theater dengan mengosongkan nama theater
+- Location: D:\Playing-Playwright\playwright-CMSBioskop\tests\TestingCMSBioskop\TestingTheater.spec.js:72:1
+
+# Error details
+
+```
+Error: Timed out 5000ms waiting for expect(locator).toHaveText(expected)
+
+Locator: locator('p[id=\':r1h:-form-item-message\']')
+Expected string: "String must contain at least 3 character"
+Received: <element(s) not found>
+Call log:
+  - expect.toHaveText with timeout 5000ms
+  - waiting for locator('p[id=\':r1h:-form-item-message\']')
+
+    at D:\Playing-Playwright\playwright-CMSBioskop\tests\TestingCMSBioskop\TestingTheater.spec.js:89:35
+    at D:\Playing-Playwright\playwright-CMSBioskop\tests\TestingCMSBioskop\TestingTheater.spec.js:86:14
+```
+
+# Page snapshot
+
+```yaml
+- link "CMS One Cinema":
+  - img
+  - text: CMS One Cinema
+- button "Toggle notifications":
+  - img
+  - text: Toggle notifications
+- navigation:
+  - link "Dashboard":
+    - img
+    - text: Dashboard
+  - link "Genre":
+    - img
+    - text: Genre
+  - link "Theaters":
+    - img
+    - text: Theaters
+  - link "Movies":
+    - img
+    - text: Movies
+  - link "Customers":
+    - img
+    - text: Customers
+  - link "Transactions":
+    - img
+    - text: Transactions
+  - link "Wallet Transactions":
+    - img
+    - text: Wallet Transactions
+- banner:
+  - img
+  - searchbox "Search products..."
+  - button "Toggle user menu":
+    - img
+    - text: Toggle user menu
+- main:
+  - heading "Update data theater" [level=1]
+  - text: Name
+  - textbox "Name"
+  - paragraph: String must contain at least 3 character(s)
+  - text: City
+  - combobox "City": Medan
+  - button "Submit":
+    - img
+    - text: Submit
+  - button "Cancel":
+    - link "Cancel"
+- region "Notifications alt+T"
+```
+
+# Test source
+
+```ts
+   1 | const { test, expect } = require("@playwright/test");
+   2 | const LoginBioskop = require("../../pages/FunctionsCMSBioskop/LoginCMS");
+   3 | const {
+   4 |   saveScreenshot,
+   5 | } = require("../../pages/FunctionsCMSBioskop/screenshoots");
+   6 |
+   7 | test.beforeEach(async ({ page }, testInfo) => {
+   8 |   await test.step("Login dan Pilih Menu Genre", async () => {
+   9 |     const logincms = new LoginBioskop(page, testInfo);
+  10 |     await logincms.loginCMS("admin@gmail.com", "Password5");
+  11 |
+  12 |     //Menu Theater
+  13 |     await page.locator("//a[normalize-space()='Theaters']").click();
+  14 |     const verifyTheater = page.locator(
+  15 |       "h1[class='text-lg font-semibold m:text-2xl']"
+  16 |     );
+  17 |     await expect(verifyTheater).toHaveText("List Theater");
+  18 |   });
+  19 | });
+  20 |
+  21 | const dataTheater = "Layar Tancep";
+  22 | const editTheater = "Bioskop Keliling";
+  23 |
+  24 | test("Menambah data Theater baru", async ({ page }) => {
+  25 |   await test.step("Klik button Add Data Theater ", async () => {
+  26 |     await page
+  27 |       .locator(
+  28 |         "body > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > main:nth-child(2) > div:nth-child(2) > a:nth-child(1)"
+  29 |       )
+  30 |       .click();
+  31 |     const verifyFormTheater = page.locator(
+  32 |       "h1[class='text-lg font-semibold m:text-2xl']"
+  33 |     );
+  34 |     await expect(verifyFormTheater).toHaveText("Create data theater");
+  35 |   });
+  36 |
+  37 |   await test.step("Input data Theater baru ", async () => {
+  38 |     await page.getByPlaceholder("Enter name...").fill("Layar Tancep");
+  39 |     await page.locator("select[aria-hidden='true']").selectOption("Medan");
+  40 |
+  41 |     await page.locator("//button[normalize-space()='Submit']").click();
+  42 |   });
+  43 |
+  44 |   await test.step("Verify data theater baru ", async () => {
+  45 |     const verifyNewTheater = page.locator(
+  46 |       "//td[normalize-space()='Layar Tancep']"
+  47 |     );
+  48 |     await expect(verifyNewTheater).toHaveText("Layar Tancep");
+  49 |   });
+  50 | });
+  51 |
+  52 | test("Lakukan Edit Theater", async ({ page }) => {
+  53 |   await test.step("Klik button Edit data theater", async () => {
+  54 |     await page
+  55 |       .locator("tr", { hasText: "Layar Tancep" })
+  56 |       .locator("a:has-text('Edit')")
+  57 |       .click();
+  58 |   });
+  59 |   await test.step("Edit data theater", async () => {
+  60 |     await page.getByPlaceholder("Enter name...").fill(editTheater);
+  61 |     await page.locator("//button[normalize-space()='Submit']").click();
+  62 |   });
+  63 |
+  64 |   await test.step("Verify data theater yang berhasil di edit ", async () => {
+  65 |     const verifyNewTheater = page.locator(
+  66 |       "//td[normalize-space()='Bioskop Keliling']"
+  67 |     );
+  68 |     await expect(verifyNewTheater).toHaveText(`${editTheater}`);
+  69 |   });
+  70 | });
+  71 |
+  72 | test("Lakukan edit theater dengan mengosongkan nama theater", async ({
+  73 |   page,
+  74 | }) => {
+  75 |   await test.step("Klik button Edit data theater", async () => {
+  76 |     await page
+  77 |       .locator("tr", { hasText: "Bioskop Keliling" })
+  78 |       .locator("a:has-text('Edit')")
+  79 |       .click();
+  80 |   });
+  81 |   await test.step("Edit data theater", async () => {
+  82 |     await page.getByPlaceholder("Enter name...").fill(" ");
+  83 |     await page.locator("//button[normalize-space()='Submit']").click();
+  84 |   });
+  85 |
+  86 |   await test.step("Verify data theater yang berhasil di edit ", async () => {
+  87 |     const errorBlankfield = page.locator("p[id=':r1h:-form-item-message']");
+  88 |     const errorMessage = "String must contain at least 3 character";
+> 89 |     await expect(errorBlankfield).toHaveText(`${errorMessage}`);
+     |                                   ^ Error: Timed out 5000ms waiting for expect(locator).toHaveText(expected)
+  90 |   });
+  91 | });
+  92 |
+```
