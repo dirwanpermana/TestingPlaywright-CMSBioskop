@@ -1,0 +1,84 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: Contoh test case setelah login
+- Location: D:\Playing-Playwright\playwrightWithJS\tests\TestingCMSBioskop\Genre.spec.js:9:1
+
+# Error details
+
+```
+Error: expect.toBeVisible: Error: strict mode violation: locator('text=CMS One Cinema') resolved to 2 elements:
+    1) <span class="">CMS One Cinema</span> aka getByRole('link', { name: 'CMS One Cinema' })
+    2) <h1 class="text-lg font-semibold md:text-2xl">CMS One Cinema</h1> aka getByRole('heading', { name: 'CMS One Cinema' })
+
+Call log:
+  - expect.toBeVisible with timeout 5000ms
+  - waiting for locator('text=CMS One Cinema')
+
+    at D:\Playing-Playwright\playwrightWithJS\tests\TestingCMSBioskop\Genre.spec.js:10:53
+```
+
+# Page snapshot
+
+```yaml
+- link "CMS One Cinema":
+  - img
+  - text: CMS One Cinema
+- button "Toggle notifications":
+  - img
+  - text: Toggle notifications
+- navigation:
+  - link "Dashboard":
+    - img
+    - text: Dashboard
+  - link "Genre":
+    - img
+    - text: Genre
+  - link "Theaters":
+    - img
+    - text: Theaters
+  - link "Movies":
+    - img
+    - text: Movies
+  - link "Customers":
+    - img
+    - text: Customers
+  - link "Transactions":
+    - img
+    - text: Transactions
+  - link "Wallet Transactions":
+    - img
+    - text: Wallet Transactions
+- banner:
+  - img
+  - searchbox "Search products..."
+  - button "Toggle user menu":
+    - img
+    - text: Toggle user menu
+- main:
+  - heading "CMS One Cinema" [level=1]
+- region "Notifications alt+T"
+```
+
+# Test source
+
+```ts
+   1 | const { test, expect } = require("@playwright/test");
+   2 | const LoginBioskop = require("../../pages/FunctionsCMSBioskop/LoginCMS");
+   3 |
+   4 | test.beforeEach(async ({ page }, testInfo) => {
+   5 |   const logincms = new LoginBioskop(page, testInfo);
+   6 |   await logincms.loginCMS("admin@gmail.com", "Password5");
+   7 | });
+   8 |
+   9 | test("Contoh test case setelah login", async ({ page }) => {
+> 10 |   await expect(page.locator("text=CMS One Cinema")).toBeVisible();
+     |                                                     ^ Error: expect.toBeVisible: Error: strict mode violation: locator('text=CMS One Cinema') resolved to 2 elements:
+  11 | });
+  12 |
+```

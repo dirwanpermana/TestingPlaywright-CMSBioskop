@@ -1,0 +1,97 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: Melakukan Login CMS Bioskop dengan data yang valid
+- Location: D:\Playing-Playwright\playwrightWithJS\tests\TestingCMSBioskop\loginValid.spec.js:4:1
+
+# Error details
+
+```
+Error: Timed out 5000ms waiting for expect(locator).toHaveURL(expected)
+
+Locator: locator(':root')
+Expected string: "http://localhost:5173/admin"
+Received string: "http://localhost:5173/admin/login"
+Call log:
+  - expect.toHaveURL with timeout 5000ms
+  - waiting for locator(':root')
+    9 × locator resolved to <html lang="en">…</html>
+      - unexpected value "http://localhost:5173/admin/login"
+
+    at D:\Playing-Playwright\playwrightWithJS\tests\TestingCMSBioskop\loginValid.spec.js:27:24
+    at D:\Playing-Playwright\playwrightWithJS\tests\TestingCMSBioskop\loginValid.spec.js:26:14
+```
+
+# Page snapshot
+
+```yaml
+- text: Login Enter your email below to login to your accounnt Email
+- textbox "Email": admin@gmail.com
+- text: Password
+- textbox "Password": Password5!
+- button "Login"
+```
+
+# Test source
+
+```ts
+   1 | const { test, expect } = require("@playwright/test");
+   2 | const FungsiLoginLogout = require("../../pages/FunctionsCMSBioskop/fungsiLoginLogout");
+   3 |
+   4 | test("Melakukan Login CMS Bioskop dengan data yang valid", async ({
+   5 |   page,
+   6 | }, testInfo) => {
+   7 |   const loginPage = new FungsiLoginLogout(page);
+   8 |
+   9 |   // Step 1: Buka halaman login
+  10 |   await test.step("Akses halaman Login Web CMS dan input valid user", async () => {
+  11 |     await loginPage.gotoLoginPage();
+  12 |     await loginPage.verifyLoginPage("admin@gmail.com", "Password5!");
+  13 |     // Capture screenshot
+  14 |     await page.screenshot({
+  15 |       path: `screenshots/${testInfo.title}-01-login-page.png`,
+  16 |       fullPage: true,
+  17 |     });
+  18 |   });
+  19 |
+  20 |   // Step 2: Login
+  21 |   await test.step("Klik button Login", async () => {
+  22 |     await loginPage.login();
+  23 |   });
+  24 |
+  25 |   // Step 3: Verifikasi dashboard
+  26 |   await test.step("Verifikasi halaman dashboard", async () => {
+> 27 |     await expect(page).toHaveURL("http://localhost:5173/admin");
+     |                        ^ Error: Timed out 5000ms waiting for expect(locator).toHaveURL(expected)
+  28 |     const dashboard = page.locator(
+  29 |       "h1[class='text-lg font-semibold md:text-2xl']"
+  30 |     );
+  31 |     // await expect(page.locator(
+  32 |     //   "h1[class='text-lg font-semibold md:text-2xl']"
+  33 |     // ).toHaveText('CMS One Cinema');
+  34 |     await expect(dashboard).toHaveText("CMS One Cinema");
+  35 |
+  36 |     await page.screenshot({
+  37 |       path: `screenshots/${testInfo.title}-03-dashboard.png`,
+  38 |       fullPage: true,
+  39 |     });
+  40 |   });
+  41 |
+  42 |   // Step 4: Logout
+  43 |   await test.step("Logout dari aplikasi", async () => {
+  44 |     await loginPage.logout();
+  45 |     await loginPage.verifyLoginPage();
+  46 |
+  47 |     await page.screenshot({
+  48 |       path: `screenshots/${testInfo.title}-04-logout.png`,
+  49 |       fullPage: true,
+  50 |     });
+  51 |   });
+  52 | });
+  53 |
+```

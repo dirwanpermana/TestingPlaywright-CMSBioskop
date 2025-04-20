@@ -1,0 +1,161 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: Menambah data Theater baru
+- Location: D:\Playing-Playwright\playwright-CMSBioskop\tests\TestingCMSBioskop\TestingTheater.spec.js:21:1
+
+# Error details
+
+```
+Error: expect.toHaveValue: Error: Not an input element
+Call log:
+  - expect.toHaveValue with timeout 5000ms
+  - waiting for locator('tbody tr:nth-child(1)')
+
+    at D:\Playing-Playwright\playwright-CMSBioskop\tests\TestingCMSBioskop\TestingTheater.spec.js:41:36
+    at D:\Playing-Playwright\playwright-CMSBioskop\tests\TestingCMSBioskop\TestingTheater.spec.js:34:3
+```
+
+# Page snapshot
+
+```yaml
+- link "CMS One Cinema":
+  - img
+  - text: CMS One Cinema
+- button "Toggle notifications":
+  - img
+  - text: Toggle notifications
+- navigation:
+  - link "Dashboard":
+    - img
+    - text: Dashboard
+  - link "Genre":
+    - img
+    - text: Genre
+  - link "Theaters":
+    - img
+    - text: Theaters
+  - link "Movies":
+    - img
+    - text: Movies
+  - link "Customers":
+    - img
+    - text: Customers
+  - link "Transactions":
+    - img
+    - text: Transactions
+  - link "Wallet Transactions":
+    - img
+    - text: Wallet Transactions
+- banner:
+  - img
+  - searchbox "Search products..."
+  - button "Toggle user menu":
+    - img
+    - text: Toggle user menu
+- main:
+  - heading "List Theater" [level=1]
+  - link "Add Data":
+    - img
+    - text: Add Data
+  - table:
+    - rowgroup:
+      - row "Theater City":
+        - cell "Theater"
+        - cell "City"
+        - cell
+    - rowgroup:
+      - row "XXI Premiere Brebes Edit Delete":
+        - cell "XXI Premiere"
+        - cell "Brebes"
+        - cell "Edit Delete":
+          - link "Edit":
+            - img
+            - text: Edit
+          - button "Delete":
+            - img
+            - text: Delete
+      - row "XXI Jakarta Jakarta Edit Delete":
+        - cell "XXI Jakarta"
+        - cell "Jakarta"
+        - cell "Edit Delete":
+          - link "Edit":
+            - img
+            - text: Edit
+          - button "Delete":
+            - img
+            - text: Delete
+      - row "Layar Tancep Medan Edit Delete":
+        - cell "Layar Tancep"
+        - cell "Medan"
+        - cell "Edit Delete":
+          - link "Edit":
+            - img
+            - text: Edit
+          - button "Delete":
+            - img
+            - text: Delete
+- region "Notifications alt+T":
+  - list:
+    - listitem:
+      - img
+      - text: Theater data successfully created
+```
+
+# Test source
+
+```ts
+   1 | const { test, expect } = require("@playwright/test");
+   2 | const LoginBioskop = require("../../pages/FunctionsCMSBioskop/LoginCMS");
+   3 | const {
+   4 |   saveScreenshot,
+   5 | } = require("../../pages/FunctionsCMSBioskop/screenshoots");
+   6 |
+   7 | test.beforeEach(async ({ page }, testInfo) => {
+   8 |   await test.step("Login dan Pilih Menu Genre", async () => {
+   9 |     const logincms = new LoginBioskop(page, testInfo);
+  10 |     await logincms.loginCMS("admin@gmail.com", "Password5");
+  11 |
+  12 |     //Menu Theater
+  13 |     await page.locator("//a[normalize-space()='Theaters']").click();
+  14 |     const verifyTheater = page.locator(
+  15 |       "h1[class='text-lg font-semibold m:text-2xl']"
+  16 |     );
+  17 |     await expect(verifyTheater).toHaveText("List Theater");
+  18 |   });
+  19 | });
+  20 |
+  21 | test("Menambah data Theater baru", async ({ page }) => {
+  22 |   await test.step("Klik button Add Data Theater ", async () => {
+  23 |     await page
+  24 |       .locator(
+  25 |         "body > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > main:nth-child(2) > div:nth-child(2) > a:nth-child(1)"
+  26 |       )
+  27 |       .click();
+  28 |     const verifyFormTheater = page.locator(
+  29 |       "h1[class='text-lg font-semibold m:text-2xl']"
+  30 |     );
+  31 |     await expect(verifyFormTheater).toHaveText("Create data theater");
+  32 |   });
+  33 |
+  34 |   await test.step("Input data Theater baru ", async () => {
+  35 |     await page.getByPlaceholder("Enter name...").fill("Layar Tancep");
+  36 |     await page.locator("select[aria-hidden='true']").selectOption("Medan");
+  37 |
+  38 |     await page.locator("//button[normalize-space()='Submit']").click();
+  39 |     // await await page.waitForTimeout(5000);
+  40 |     const verifyNewTheater = page.locator("tbody tr:nth-child(1)");
+> 41 |     await expect(verifyNewTheater).toHaveValue("Layar Tancep");
+     |                                    ^ Error: expect.toHaveValue: Error: Not an input element
+  42 |   });
+  43 |
+  44 |   //   await test.step("Klik button Add Data Theater ", async () => {});
+  45 |   //   await test.step("Klik button Add Data Theater ", async () => {});
+  46 | });
+  47 |
+```

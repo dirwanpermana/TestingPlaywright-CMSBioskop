@@ -1,0 +1,67 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: Menambah data Genre dengan kurang dari 5 karakter
+- Location: D:\Playing-Playwright\playwrightWithJS\tests\TestingCMSBioskop\Genre.spec.js:18:1
+
+# Error details
+
+```
+Error: page.goto: Test timeout of 30000ms exceeded.
+Call log:
+  - navigating to "http://localhost:5173/admin/login", waiting until "load"
+
+    at LoginBioskop.loginCMS (D:\Playing-Playwright\playwrightWithJS\pages\FunctionsCMSBioskop\LoginCMS.js:19:21)
+    at D:\Playing-Playwright\playwrightWithJS\tests\TestingCMSBioskop\Genre.spec.js:9:18
+```
+
+# Test source
+
+```ts
+   1 | const { expect } = require("@playwright/test");
+   2 | const { saveScreenshot } = require("./screenshoots");
+   3 |
+   4 | class LoginBioskop {
+   5 |   constructor(page, testInfo) {
+   6 |     this.page = page;
+   7 |     this.testInfo = testInfo;
+   8 |
+   9 |     this.usernameInput = page.getByPlaceholder("Input Email");
+  10 |     this.passwordInput = page.getByPlaceholder("Input Password");
+  11 |     this.loginButton = page.locator("button[type='submit']");
+  12 |     this.headingLogin = page.locator(
+  13 |       "//div[@class='tracking-tight text-2xl font-bold text-center']"
+  14 |     );
+  15 |   }
+  16 |
+  17 |   async loginCMS(username, password) {
+  18 |     // Step 1: Go to login page
+> 19 |     await this.page.goto("http://localhost:5173/admin/login");
+     |                     ^ Error: page.goto: Test timeout of 30000ms exceeded.
+  20 |     await saveScreenshot(this.page, this.testInfo, "01-login-page");
+  21 |
+  22 |     // Step 2: Fill credentials and login
+  23 |     await expect(this.headingLogin).toBeVisible();
+  24 |     await this.usernameInput.fill(username);
+  25 |     await this.passwordInput.fill(password);
+  26 |     await this.loginButton.click();
+  27 |
+  28 |     // Step 3: Verify dashboard
+  29 |     await expect(this.page).toHaveURL("http://localhost:5173/admin");
+  30 |     const dashboard = this.page.locator(
+  31 |       "h1[class='text-lg font-semibold md:text-2xl']"
+  32 |     );
+  33 |     await expect(dashboard).toHaveText("CMS One Cinema");
+  34 |
+  35 |     await saveScreenshot(this.page, this.testInfo, "02-dashboard");
+  36 |   }
+  37 | }
+  38 |
+  39 | module.exports = LoginBioskop;
+  40 |
+```

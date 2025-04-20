@@ -1,0 +1,42 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: Add Genre
+- Location: D:\Playing-Playwright\playwrightWithJS\tests\TestingCMSBioskop\Genre.spec.js:9:1
+
+# Error details
+
+```
+Error: locator.click: Target page, context or browser has been closed
+Call log:
+  - waiting for locator('body > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > main:nth-child(2) > div:nth-child(2) > a:nth-child(1)')
+
+    at D:\Playing-Playwright\playwrightWithJS\tests\TestingCMSBioskop\Genre.spec.js:14:6
+```
+
+# Test source
+
+```ts
+   1 | const { test, expect } = require("@playwright/test");
+   2 | const LoginBioskop = require("../../pages/FunctionsCMSBioskop/LoginCMS");
+   3 |
+   4 | test.beforeEach(async ({ page }, testInfo) => {
+   5 |   const logincms = new LoginBioskop(page, testInfo);
+   6 |   await logincms.loginCMS("admin@gmail.com", "Password5");
+   7 | });
+   8 |
+   9 | test("Add Genre", async ({ page }) => {
+  10 |   await page
+  11 |     .locator(
+  12 |       "body > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > main:nth-child(2) > div:nth-child(2) > a:nth-child(1)"
+  13 |     )
+> 14 |     .click();
+     |      ^ Error: locator.click: Target page, context or browser has been closed
+  15 | });
+  16 |
+```

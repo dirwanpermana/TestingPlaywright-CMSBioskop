@@ -1,0 +1,168 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: Login Aplikasi dengan akun yang valid
+- Location: D:\Playing-Playwright\playwrightWithJS\tests\latihanTest\login.spec.js:5:1
+
+# Error details
+
+```
+Error: locator.click: Test timeout of 30000ms exceeded.
+Call log:
+  - waiting for locator('img[alt=\'menu\']')
+    - locator resolved to <img alt="menu" src="/static/media/burger-menu.93a4e66d6d393af53ac4ed46e5193397.svg"/>
+  - attempting click action
+    2 × waiting for element to be visible, enabled and stable
+      - element is visible, enabled and stable
+      - scrolling into view if needed
+      - done scrolling
+      - <div class="top">…</div> from <div class="sidebar active-sidebar">…</div> subtree intercepts pointer events
+    - retrying click action
+    - waiting 20ms
+    2 × waiting for element to be visible, enabled and stable
+      - element is visible, enabled and stable
+      - scrolling into view if needed
+      - done scrolling
+      - <div class="top">…</div> from <div class="sidebar active-sidebar">…</div> subtree intercepts pointer events
+    - retrying click action
+      - waiting 100ms
+    45 × waiting for element to be visible, enabled and stable
+       - element is visible, enabled and stable
+       - scrolling into view if needed
+       - done scrolling
+       - <div class="top">…</div> from <div class="sidebar active-sidebar">…</div> subtree intercepts pointer events
+     - retrying click action
+       - waiting 500ms
+
+    at LoginPageDong.logout (D:\Playing-Playwright\playwrightWithJS\pages\Latihan\LoginPageDong.js:42:29)
+    at D:\Playing-Playwright\playwrightWithJS\tests\latihanTest\login.spec.js:13:20
+    at D:\Playing-Playwright\playwrightWithJS\tests\latihanTest\login.spec.js:8:3
+```
+
+# Page snapshot
+
+```yaml
+- navigation:
+  - img "logo"
+  - heading "Learn Automation Courses" [level=1]
+  - button "Cart"
+  - img "menu"
+  - text: Learn Automation Courses
+  - img "delete"
+  - link "Home"
+  - link "Practise"
+  - button "Sign out"
+- heading "Java For Tester" [level=2]
+- paragraph: Java For Tester...
+- img "instructor"
+- text: Mukesh Otwani
+- img "clock"
+- text: "Start: Mon Feb 17 2025"
+- img "clock"
+- text: "Finish: Mon Mar 17 2025 Price: ₹500"
+- button "Add to Cart right arrow":
+  - text: Add to Cart
+  - img "right arrow"
+- heading "Selenium For Web Automation" [level=2]
+- paragraph: Selenium For Web Automation...
+- img "instructor"
+- text: Mukesh Otwani
+- img "clock"
+- text: "Start: Mon Feb 17 2025"
+- img "clock"
+- text: "Finish: Mon Mar 17 2025 Price: ₹1500"
+- button "Add to Cart right arrow":
+  - text: Add to Cart
+  - img "right arrow"
+- heading "Test" [level=2]
+- paragraph: JS...
+- img "instructor"
+- text: Test
+- img "clock"
+- text: "Start: Tue Apr 15 2025"
+- img "clock"
+- text: "Finish: Sun Jun 01 2025 Price: ₹250"
+- button "Add to Cart right arrow":
+  - text: Add to Cart
+  - img "right arrow"
+- heading "Playwright checkpoint 22" [level=2]
+- paragraph: test...
+- img "instructor"
+- text: Tech Thread
+- img "clock"
+- text: "Start: Thu May 15 2025"
+- img "clock"
+- text: "Finish: Tue Jul 15 2025 Price: ₹9999"
+- button "Add to Cart right arrow":
+  - text: Add to Cart
+  - img "right arrow"
+- heading "Learn Automation By Mukesh Otwani" [level=3]
+- heading "©2023 All rights reserved" [level=2]
+- link:
+  - img
+- link:
+  - img
+- link:
+  - img
+- link:
+  - img
+```
+
+# Test source
+
+```ts
+   1 | const { expect } = require("allure-playwright");
+   2 |
+   3 | class LoginPageDong {
+   4 |   constructor(page) {
+   5 |     this.page = page;
+   6 |
+   7 |     this.assertLogin = page.locator(".header");
+   8 |     this.username = page.locator("#email1");
+   9 |     this.password = page.locator("#password1");
+  10 |     this.buttonLogin = page.locator("button[type='submit']");
+  11 |
+  12 |     this.burgerButton = page.locator("img[alt='menu']");
+  13 |     this.listMenu = page.locator(".nav-menu-item");
+  14 |
+  15 |     this.logoutButton = page.locator("button[class='nav-menu-item']");
+  16 |   }
+  17 |
+  18 |   async loginWeb(username, password) {
+  19 |     await this.page.goto("https://freelance-learn-automation.vercel.app/login");
+  20 |
+  21 |     await expect(this.assertLogin).toHaveText("Sign In");
+  22 |     await this.username.fill(username);
+  23 |     await this.password.fill(password);
+  24 |     await this.buttonLogin.click();
+  25 |   }
+  26 |
+  27 |   async dashboard() {
+  28 |     // Klik burger button jika sidebar tersembunyi
+  29 |     await this.burgerButton.click();
+  30 |     // Ambil semua menu item dan verifikasi teksnya
+  31 |     const expectedMenus = ["Home", "Practise"];
+  32 |     const count = await this.listMenu.count();
+  33 |
+  34 |     for (let i = 0; i < count; i++) {
+  35 |       const menuText = await this.listMenu.nth(i).innerText();
+  36 |       console.log(`Menu ditemukan: ${menuText}`);
+  37 |       expect(expectedMenus).toContain(menuText); // Assertion check
+  38 |     }
+  39 |   }
+  40 |
+  41 |   async logout() {
+> 42 |     await this.burgerButton.click();
+     |                             ^ Error: locator.click: Test timeout of 30000ms exceeded.
+  43 |     await this.logoutButton.click();
+  44 |   }
+  45 | }
+  46 |
+  47 | module.exports = LoginPageDong;
+  48 |
+```

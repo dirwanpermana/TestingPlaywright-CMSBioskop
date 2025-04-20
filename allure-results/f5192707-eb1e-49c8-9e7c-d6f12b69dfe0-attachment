@@ -1,0 +1,253 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: Add Data Genre Baru
+- Location: D:\Playing-Playwright\playwrightWithJS\tests\TestingCMSBioskop\Genre.spec.js:75:1
+
+# Error details
+
+```
+Error: expect.toHaveText: Error: strict mode violation: locator('//div[normalize-space()=\'Action Comedy\']') resolved to 3 elements:
+    1) <div class="inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-primary text-primary-foreground shadow hover:bg-primary/80">Action Comedy</div> aka getByText('Action Comedy').first()
+    2) <div class="inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-primary text-primary-foreground shadow hover:bg-primary/80">Action Comedy</div> aka getByText('Action Comedy').nth(1)
+    3) <div class="inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-primary text-primary-foreground shadow hover:bg-primary/80">Action Comedy</div> aka getByText('Action Comedy').nth(2)
+
+Call log:
+  - expect.toHaveText with timeout 5000ms
+  - waiting for locator('//div[normalize-space()=\'Action Comedy\']')
+
+    at D:\Playing-Playwright\playwrightWithJS\tests\TestingCMSBioskop\Genre.spec.js:98:29
+    at D:\Playing-Playwright\playwrightWithJS\tests\TestingCMSBioskop\Genre.spec.js:96:14
+```
+
+# Page snapshot
+
+```yaml
+- link "CMS One Cinema":
+  - img
+  - text: CMS One Cinema
+- button "Toggle notifications":
+  - img
+  - text: Toggle notifications
+- navigation:
+  - link "Dashboard":
+    - img
+    - text: Dashboard
+  - link "Genre":
+    - img
+    - text: Genre
+  - link "Theaters":
+    - img
+    - text: Theaters
+  - link "Movies":
+    - img
+    - text: Movies
+  - link "Customers":
+    - img
+    - text: Customers
+  - link "Transactions":
+    - img
+    - text: Transactions
+  - link "Wallet Transactions":
+    - img
+    - text: Wallet Transactions
+- banner:
+  - img
+  - searchbox "Search products..."
+  - button "Toggle user menu":
+    - img
+    - text: Toggle user menu
+- main:
+  - heading "List Genre" [level=1]
+  - link "Add Data":
+    - img
+    - text: Add Data
+  - table:
+    - rowgroup:
+      - row "Genre":
+        - cell "Genre"
+        - cell
+    - rowgroup:
+      - row "Comedy Edit Delete":
+        - cell "Comedy"
+        - cell "Edit Delete":
+          - link "Edit":
+            - img
+            - text: Edit
+          - button "Delete":
+            - img
+            - text: Delete
+      - row "Romance Edit Delete":
+        - cell "Romance"
+        - cell "Edit Delete":
+          - link "Edit":
+            - img
+            - text: Edit
+          - button "Delete":
+            - img
+            - text: Delete
+      - row "Action Edit Delete":
+        - cell "Action"
+        - cell "Edit Delete":
+          - link "Edit":
+            - img
+            - text: Edit
+          - button "Delete":
+            - img
+            - text: Delete
+      - row "action drama Edit Delete":
+        - cell "action drama"
+        - cell "Edit Delete":
+          - link "Edit":
+            - img
+            - text: Edit
+          - button "Delete":
+            - img
+            - text: Delete
+      - row "Action Comedy Edit Delete":
+        - cell "Action Comedy"
+        - cell "Edit Delete":
+          - link "Edit":
+            - img
+            - text: Edit
+          - button "Delete":
+            - img
+            - text: Delete
+      - row "Action Comedy Edit Delete":
+        - cell "Action Comedy"
+        - cell "Edit Delete":
+          - link "Edit":
+            - img
+            - text: Edit
+          - button "Delete":
+            - img
+            - text: Delete
+      - row "Action Comedy Edit Delete":
+        - cell "Action Comedy"
+        - cell "Edit Delete":
+          - link "Edit":
+            - img
+            - text: Edit
+          - button "Delete":
+            - img
+            - text: Delete
+- region "Notifications alt+T":
+  - list:
+    - listitem:
+      - img
+      - text: Genre data succesfully created
+```
+
+# Test source
+
+```ts
+   1 | const { test, expect } = require("@playwright/test");
+   2 | const LoginBioskop = require("../../pages/FunctionsCMSBioskop/LoginCMS");
+   3 | const {
+   4 |   saveScreenshot,
+   5 | } = require("../../pages/FunctionsCMSBioskop/screenshoots");
+   6 |
+   7 | test.beforeEach(async ({ page }, testInfo) => {
+   8 |   await test.step("Login dan Pilih Menu Genre", async () => {
+   9 |     const logincms = new LoginBioskop(page, testInfo);
+   10 |     await logincms.loginCMS("admin@gmail.com", "Password5");
+   11 |
+   12 |     //Menu Genre
+   13 |     await page.locator("//a[normalize-space()='Genre']").click();
+   14 |     const cekGenre = page.locator("//h1[normalize-space()='List Genre']");
+   15 |     await expect(cekGenre).toHaveText("List Genre");
+   16 |     //   await saveScreenshot(page, testInfo, "halaman Genre");
+   17 |   });
+   18 | });
+   19 |
+   20 | test("Menambah data Genre dengan kurang dari 5 karakter", async ({
+   21 |   page,
+   22 | }, testInfo) => {
+   23 |   await test.step("Akses form Genre", async () => {
+   24 |     await page.locator("//a[normalize-space()='Add Data']").click();
+   25 |
+   26 |     // Verify halaman form Genre
+   27 |     await expect(page).toHaveURL("http://localhost:5173/admin/genres/create");
+   28 |     const formGenre = page.locator(
+   29 |       "h1[class='text-lg font-semibold m:text-2xl']"
+   30 |     );
+   31 |     await expect(formGenre).toHaveText("Created data genre");
+   32 |     // await saveScreenshot(page, testInfo, "Form Genre");
+   33 |   });
+   34 |
+   35 |   await test.step("Tambah data genre dengan 2 karakter ", async () => {
+   36 |     await page.getByPlaceholder("Input Name").fill("actj");
+   37 |     await page.locator("//button[normalize-space()='Submit']").click();
+   38 |
+   39 |     const errorKarakterKurang = page.locator(
+   40 |       "text=String must contain at least 5 character(s)"
+   41 |     );
+   42 |     await expect(errorKarakterKurang).toHaveText(
+   43 |       "String must contain at least 5 character(s)"
+   44 |     );
+   45 |     // await saveScreenshot(page, testInfo, "Verify Error Message");
+   46 |   });
+   47 | });
+   48 |
+   49 | test("Verify Button Cancel pada Halaman Form Genre Berfungsi", async ({
+   50 |   page,
+   51 | }, testInfo) => {
+   52 |   await test.step("Akses form Genre", async () => {
+   53 |     await page.locator("//a[normalize-space()='Add Data']").click();
+   54 |
+   55 |     // Verify halaman form Genre
+   56 |     await expect(page).toHaveURL("http://localhost:5173/admin/genres/create");
+   57 |     const formGenre = page.locator(
+   58 |       "h1[class='text-lg font-semibold m:text-2xl']"
+   59 |     );
+   60 |     await expect(formGenre).toHaveText("Created data genre");
+   61 |     // await saveScreenshot(page, testInfo, "Form Genre");
+   62 |   });
+   63 |
+   64 |   await test.step("Klik button Cancel", async () => {
+   65 |     await page.locator("//a[normalize-space()='Cancel']").click();
+   66 |   });
+   67 |
+   68 |   await test.step("Verify redirect ke halaman Genre", async () => {
+   69 |     const cekGenre = page.locator("//h1[normalize-space()='List Genre']");
+   70 |     await expect(cekGenre).toHaveText("List Genre");
+   71 |     // await saveScreenshot(page, testInfo, "Redirect ke halaman Genre");
+   72 |   });
+   73 | });
+   74 |
+   75 | test("Add Data Genre Baru", async ({ page }, testInfo) => {
+   76 |   const genreBaru = "Action Comedy";
+   77 |
+   78 |   await test.step("Akses form Genre", async () => {
+   79 |     await page.locator("//a[normalize-space()='Add Data']").click();
+   80 |
+   81 |     // Verify halaman form Genre
+   82 |     await expect(page).toHaveURL("http://localhost:5173/admin/genres/create");
+   83 |     const formGenre = page.locator(
+   84 |       "h1[class='text-lg font-semibold m:text-2xl']"
+   85 |     );
+   86 |     await expect(formGenre).toHaveText("Created data genre");
+   87 |     // await saveScreenshot(page, testInfo, "Form Genre");
+   88 |   });
+   89 |
+   90 |   await test.step("Add data genre baru", async () => {
+   91 |     await page.getByPlaceholder("Input Name").fill(genreBaru);
+   92 |     // await saveScreenshot(page, testInfo, "Add Genre baru");
+   93 |     await page.locator("//button[normalize-space()='Submit']").click();
+   94 |   });
+   95 |
+   96 |   await test.step("Verify data Genre baru", async () => {
+   97 |     const listGenre = page.locator("//div[normalize-space()='Action Comedy']");
+>  98 |     await expect(listGenre).toHaveText(genreBaru);
+      |                             ^ Error: expect.toHaveText: Error: strict mode violation: locator('//div[normalize-space()=\'Action Comedy\']') resolved to 3 elements:
+   99 |
+  100 |     // await saveScreenshot(page, testInfo, "Redirect ke halaman Genre");
+  101 |   });
+  102 | });
+  103 |
+```

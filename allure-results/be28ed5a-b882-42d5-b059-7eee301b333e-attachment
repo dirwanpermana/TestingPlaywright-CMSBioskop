@@ -1,0 +1,120 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: Menambah data Genre
+- Location: D:\Playing-Playwright\playwrightWithJS\tests\TestingCMSBioskop\Genre.spec.js:18:1
+
+# Error details
+
+```
+Error: expect.toHaveText: Unexpected token "#" while parsing css selector "#:rd:-form-item-message". Did you mean to CSS.escape it?
+Call log:
+  - expect.toHaveText with timeout 5000ms
+  - waiting for #:rd:-form-item-message
+
+    at D:\Playing-Playwright\playwrightWithJS\tests\TestingCMSBioskop\Genre.spec.js:36:39
+    at D:\Playing-Playwright\playwrightWithJS\tests\TestingCMSBioskop\Genre.spec.js:31:3
+```
+
+# Page snapshot
+
+```yaml
+- link "CMS One Cinema":
+  - img
+  - text: CMS One Cinema
+- button "Toggle notifications":
+  - img
+  - text: Toggle notifications
+- navigation:
+  - link "Dashboard":
+    - img
+    - text: Dashboard
+  - link "Genre":
+    - img
+    - text: Genre
+  - link "Theaters":
+    - img
+    - text: Theaters
+  - link "Movies":
+    - img
+    - text: Movies
+  - link "Customers":
+    - img
+    - text: Customers
+  - link "Transactions":
+    - img
+    - text: Transactions
+  - link "Wallet Transactions":
+    - img
+    - text: Wallet Transactions
+- banner:
+  - img
+  - searchbox "Search products..."
+  - button "Toggle user menu":
+    - img
+    - text: Toggle user menu
+- main:
+  - heading "Created data genre" [level=1]
+  - text: Name Genre
+  - textbox "Name Genre": ac
+  - paragraph: String must contain at least 5 character(s)
+  - button "Submit":
+    - img
+    - text: Submit
+  - button "Cancel":
+    - link "Cancel"
+- region "Notifications alt+T"
+```
+
+# Test source
+
+```ts
+   1 | const { test, expect } = require("@playwright/test");
+   2 | const LoginBioskop = require("../../pages/FunctionsCMSBioskop/LoginCMS");
+   3 | const {
+   4 |   saveScreenshot,
+   5 | } = require("../../pages/FunctionsCMSBioskop/screenshoots");
+   6 |
+   7 | test.beforeEach(async ({ page }, testInfo) => {
+   8 |   const logincms = new LoginBioskop(page, testInfo);
+   9 |   await logincms.loginCMS("admin@gmail.com", "Password5");
+  10 |
+  11 |   //Menu Genre
+  12 |   await page.locator("//a[normalize-space()='Genre']").click();
+  13 |   const cekGenre = page.locator("//h1[normalize-space()='List Genre']");
+  14 |   await expect(cekGenre).toHaveText("List Genre");
+  15 |   await saveScreenshot(page, testInfo, "halaman Genre");
+  16 | });
+  17 |
+  18 | test("Menambah data Genre", async ({ page }, testInfo) => {
+  19 |   await test.step("Akses form Genre", async () => {
+  20 |     await page.locator("//a[normalize-space()='Add Data']").click();
+  21 |
+  22 |     // Verify halaman form Genre
+  23 |     await expect(page).toHaveURL("http://localhost:5173/admin/genres/create");
+  24 |     const formGenre = page.locator(
+  25 |       "h1[class='text-lg font-semibold m:text-2xl']"
+  26 |     );
+  27 |     await expect(formGenre).toHaveText("Created data genre");
+  28 |     await saveScreenshot(page, testInfo, "Form Genre");
+  29 |   });
+  30 |
+  31 |   await test.step("Tambah data genre dengan 2 karakter ", async () => {
+  32 |     await page.getByPlaceholder("Input Name").fill("ac");
+  33 |     await page.locator("//button[normalize-space()='Submit']").click();
+  34 |
+  35 |     const errorKarakterKurang = page.locator("#:rd:-form-item-message");
+> 36 |     await expect(errorKarakterKurang).toHaveText(
+     |                                       ^ Error: expect.toHaveText: Unexpected token "#" while parsing css selector "#:rd:-form-item-message". Did you mean to CSS.escape it?
+  37 |       "String must contain at least 5 character(s)"
+  38 |     );
+  39 |     await saveScreenshot(page, testInfo, "Verify Error Message");
+  40 |   });
+  41 | });
+  42 |
+```

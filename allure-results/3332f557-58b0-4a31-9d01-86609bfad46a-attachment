@@ -1,0 +1,144 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: Menambah data Theater baru
+- Location: D:\Playing-Playwright\playwright-CMSBioskop\tests\TestingCMSBioskop\TestingTheater.spec.js:21:1
+
+# Error details
+
+```
+Error: locator.click: Test timeout of 30000ms exceeded.
+Call log:
+  - waiting for locator('select[aria-hidden=\'true\']')
+    - locator resolved to <select tabindex="-1" aria-hidden="true">…</select>
+  - attempting click action
+    2 × waiting for element to be visible, enabled and stable
+      - element is visible, enabled and stable
+      - scrolling into view if needed
+      - done scrolling
+      - <div class="space-y-2">…</div> intercepts pointer events
+    - retrying click action
+    - waiting 20ms
+    2 × waiting for element to be visible, enabled and stable
+      - element is visible, enabled and stable
+      - scrolling into view if needed
+      - done scrolling
+      - <div class="space-y-2">…</div> intercepts pointer events
+    - retrying click action
+      - waiting 100ms
+    52 × waiting for element to be visible, enabled and stable
+       - element is visible, enabled and stable
+       - scrolling into view if needed
+       - done scrolling
+       - <div class="space-y-2">…</div> intercepts pointer events
+     - retrying click action
+       - waiting 500ms
+
+    at D:\Playing-Playwright\playwright-CMSBioskop\tests\TestingCMSBioskop\TestingTheater.spec.js:36:54
+    at D:\Playing-Playwright\playwright-CMSBioskop\tests\TestingCMSBioskop\TestingTheater.spec.js:34:3
+```
+
+# Page snapshot
+
+```yaml
+- link "CMS One Cinema":
+  - img
+  - text: CMS One Cinema
+- button "Toggle notifications":
+  - img
+  - text: Toggle notifications
+- navigation:
+  - link "Dashboard":
+    - img
+    - text: Dashboard
+  - link "Genre":
+    - img
+    - text: Genre
+  - link "Theaters":
+    - img
+    - text: Theaters
+  - link "Movies":
+    - img
+    - text: Movies
+  - link "Customers":
+    - img
+    - text: Customers
+  - link "Transactions":
+    - img
+    - text: Transactions
+  - link "Wallet Transactions":
+    - img
+    - text: Wallet Transactions
+- banner:
+  - img
+  - searchbox "Search products..."
+  - button "Toggle user menu":
+    - img
+    - text: Toggle user menu
+- main:
+  - heading "Create data theater" [level=1]
+  - text: Name
+  - textbox "Name": Layar Tancep
+  - text: City
+  - combobox "City": Select a theater city location
+  - button "Submit":
+    - img
+    - text: Submit
+  - button "Cancel":
+    - link "Cancel"
+- region "Notifications alt+T"
+```
+
+# Test source
+
+```ts
+   1 | const { test, expect } = require("@playwright/test");
+   2 | const LoginBioskop = require("../../pages/FunctionsCMSBioskop/LoginCMS");
+   3 | const {
+   4 |   saveScreenshot,
+   5 | } = require("../../pages/FunctionsCMSBioskop/screenshoots");
+   6 |
+   7 | test.beforeEach(async ({ page }, testInfo) => {
+   8 |   await test.step("Login dan Pilih Menu Genre", async () => {
+   9 |     const logincms = new LoginBioskop(page, testInfo);
+  10 |     await logincms.loginCMS("admin@gmail.com", "Password5");
+  11 |
+  12 |     //Menu Theater
+  13 |     await page.locator("//a[normalize-space()='Theaters']").click();
+  14 |     const verifyTheater = page.locator(
+  15 |       "h1[class='text-lg font-semibold m:text-2xl']"
+  16 |     );
+  17 |     await expect(verifyTheater).toHaveText("List Theater");
+  18 |   });
+  19 | });
+  20 |
+  21 | test("Menambah data Theater baru", async ({ page }) => {
+  22 |   await test.step("Klik button Add Data Theater ", async () => {
+  23 |     await page
+  24 |       .locator(
+  25 |         "body > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > main:nth-child(2) > div:nth-child(2) > a:nth-child(1)"
+  26 |       )
+  27 |       .click();
+  28 |     const verifyFormTheater = page.locator(
+  29 |       "h1[class='text-lg font-semibold m:text-2xl']"
+  30 |     );
+  31 |     await expect(verifyFormTheater).toHaveText("Create data theater");
+  32 |   });
+  33 |
+  34 |   await test.step("Input data Theater baru ", async () => {
+  35 |     await page.getByPlaceholder("Enter name...").fill("Layar Tancep");
+> 36 |     await page.locator("select[aria-hidden='true']").click();
+     |                                                      ^ Error: locator.click: Test timeout of 30000ms exceeded.
+  37 |     await page.locator("select[aria-hidden='true']").selectOption("Medan");
+  38 |   });
+  39 |
+  40 |   //   await test.step("Klik button Add Data Theater ", async () => {});
+  41 |   //   await test.step("Klik button Add Data Theater ", async () => {});
+  42 | });
+  43 |
+```

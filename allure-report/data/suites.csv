@@ -1,0 +1,2 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"","12073","Login berhasil ke dashboard","chromium","Sun Apr 13 16:16:32 WIB 2025","passed","Sun Apr 13 16:16:44 WIB 2025","","loginPage.spec.js","",""
